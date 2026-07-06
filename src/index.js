@@ -13,18 +13,14 @@ const {
     PORT = 80,
 } = process.env;
 
+mongoose.set('strictQuery', true);
+
 if (NODE_ENV === 'development') {
     log('DEVELOPMENT!');
-    mongoose.connect('mongodb://localhost/bookAPI_Test', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+    mongoose.connect('mongodb://localhost/bookAPI_Test');
 } else {
     log('PRODUCTION!');
-    mongoose.connect('mongodb://localhost/bookAPI', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+    mongoose.connect('mongodb://localhost/bookAPI');
 }
 
 app.use(bodyParser.urlencoded({ extended: true }));
