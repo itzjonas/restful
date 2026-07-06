@@ -38,7 +38,7 @@
         "should": "^13.2.3",
         "sinon": "^9.0.2",
         "supertest": "^4.0.2",
-        "yarn": "^1.22.4"
+        "yarn": "^1.22.13"
     },
     "resolutions": {
         "lodash": "^4.17.21",
