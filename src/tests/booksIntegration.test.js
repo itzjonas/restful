@@ -26,13 +26,14 @@ describe('Book CRUD Test', () => {
             });
     });
 
-    afterEach((done) => {
-        Book.deleteMany({}).exec();
-        done();
+    afterEach(async () => {
+        await Book.deleteMany({}).exec();
     });
 
-    after((done) => {
-        mongoose.connection.close();
-        app.server.close(done());
+    after(async () => {
+        await mongoose.connection.close();
+        await new Promise((resolve) => {
+            app.server.close(resolve);
+        });
     });
 });
