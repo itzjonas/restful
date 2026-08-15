@@ -1,15 +1,13 @@
 const booksController = (Book) => {
-    const get = (req, res) => {
+    const get = async (req, res) => {
         const query = {};
 
         if (req.query.genre) {
             query.genre = req.query.genre;
         }
 
-        Book.find(query, (err, books) => {
-            if (err) {
-                return res.send(err);
-            }
+        try {
+            const books = await Book.find(query);
 
             const returnBooks = books.map((book) => {
                 const newBook = book.toJSON();
@@ -21,20 +19,25 @@ const booksController = (Book) => {
             });
 
             return res.json(returnBooks);
-        });
+        } catch (err) {
+            return res.status(500).send(err);
+        }
     };
 
-    const post = (req, res) => {
-        const book = new Book(req.body);
-
+    const post = async (req, res) => {
         if (!req.body.title) {
             res.status(400);
             return res.send('Title is required');
         }
 
-        book.save();
+        try {
+            const book = new Book(req.body);
+            await book.save();
 
-        return res.status(201).json(book);
+            return res.status(201).json(book);
+        } catch (err) {
+            return res.status(500).send(err);
+        }
     };
 
     return { get, post };

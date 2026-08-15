@@ -1,7 +1,7 @@
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign, no-underscore-dangle */
 import express from 'express';
 
-import booksController from '../controllers/booksController';
+import booksController from '../controllers/booksController.js';
 
 const routes = (Book) => {
     const bookRouter = express.Router();
@@ -11,17 +11,17 @@ const routes = (Book) => {
         .get(controller.get)
         .post(controller.post);
 
-    bookRouter.use('/books/:bookId', (req, res, next) => {
-        Book.findById(req.params.bookId, (err, book) => {
-            if (err) {
-                return res.send(err);
-            }
+    bookRouter.use('/books/:bookId', async (req, res, next) => {
+        try {
+            const book = await Book.findById(req.params.bookId);
             if (book) {
                 req.book = book;
                 return next();
             }
             return res.sendStatus(404);
-        });
+        } catch (err) {
+            return res.status(500).send(err);
+        }
     });
 
     bookRouter.route('/books/:bookId')
@@ -31,9 +31,9 @@ const routes = (Book) => {
             returnBook.links = {};
             returnBook.links.FilterByThisGenre = `http://${req.headers.host}/api/books/?genre=${encodeURIComponent(req.book.genre)}`;
 
-            res.json(returnBook);
+            return res.json(returnBook);
         })
-        .put((req, res) => {
+        .put(async (req, res) => {
             const { book } = req;
 
             book.title = req.body.title;
@@ -41,45 +41,37 @@ const routes = (Book) => {
             book.genre = req.body.genre;
             book.read = req.body.read;
 
-            req.book.save((err) => {
-                if (err) {
-                    return res.send(err);
-                }
-
+            try {
+                await req.book.save();
                 return res.json(book);
-            });
+            } catch (err) {
+                return res.status(500).send(err);
+            }
         })
-        .patch((req, res) => {
+        .patch(async (req, res) => {
             const { book } = req;
-            // eslint-disable-next-line no-underscore-dangle
             if (req.body._id) {
-                // eslint-disable-next-line no-underscore-dangle
                 delete req.body._id;
             }
 
-            Object.entries(req.body).forEach((item) => {
-                const key = item[0];
-                const value = item[1];
-
+            Object.entries(req.body).forEach(([key, value]) => {
                 book[key] = value;
             });
 
-            req.book.save((err) => {
-                if (err) {
-                    return res.send(err);
-                }
-
+            try {
+                await req.book.save();
                 return res.json(book);
-            });
+            } catch (err) {
+                return res.status(500).send(err);
+            }
         })
-        .delete((req, res) => {
-            req.book.remove((err) => {
-                if (err) {
-                    return res.send(err);
-                }
-
+        .delete(async (req, res) => {
+            try {
+                await req.book.deleteOne();
                 return res.sendStatus(204);
-            });
+            } catch (err) {
+                return res.status(500).send(err);
+            }
         });
 
     return bookRouter;

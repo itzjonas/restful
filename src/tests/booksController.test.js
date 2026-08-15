@@ -1,14 +1,14 @@
 import 'should';
 import sinon from 'sinon';
 
-import bookController from '../controllers/booksController';
+import bookController from '../controllers/booksController.js';
 
 process.env.NODE_ENV = 'development';
 
 describe('Book Controller Tests:', () => {
     describe('Post', () => {
-        it('should not allow an empty title on post', () => {
-            const Book = function Book() { this.save = () => { }; };
+        it('should not allow an empty title on post', async () => {
+            const Book = function Book() { this.save = () => Promise.resolve(); };
 
             const req = {
                 body: {
@@ -24,7 +24,7 @@ describe('Book Controller Tests:', () => {
 
             const controller = bookController(Book);
 
-            controller.post(req, res);
+            await controller.post(req, res);
 
             res.status.calledWith(400).should.equal(true, `Bad Status ${res.status.args[0][0]}`);
             res.send.calledWith('Title is required').should.equal(true);
