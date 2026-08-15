@@ -34,7 +34,7 @@ app.use(express.json());
 
 app.use('/api', bookRouter(Book));
 
-app.all('*', (req, res) => {
+app.use((req, res) => {
     res.status(404).send({
         error: `${req.originalUrl} not found, try https://${req.headers.host}/api/books`,
     });

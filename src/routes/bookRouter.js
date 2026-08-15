@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign, no-underscore-dangle */
 import express from 'express';
 
 import booksController from '../controllers/booksController.js';

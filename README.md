@@ -5,7 +5,7 @@ A modern RESTful application with [HATEOAS](https://en.wikipedia.org/wiki/HATEOA
 ## Prerequisites
 
 ### Node.js
-Node.js >= 20 is recommended (see `.nvmrc`).
+Node.js >= 26 is recommended (see `.nvmrc`).
 
 ### MongoDB
 Ensure MongoDB is installed and running locally:
